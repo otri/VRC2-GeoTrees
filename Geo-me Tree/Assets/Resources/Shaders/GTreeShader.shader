@@ -3,8 +3,6 @@ Shader "Custom/GTreeShader"
     Properties
     {
         _Amount ("Extrusion Amount", Range(-1,1)) = 0.5
-        _WaveFreq ( "Hz freq at which a wave cycles", Range(0,10) ) = 1.0
-        _WaveSpeed ( "Speed at which a wave passes over the entire tree", Range(0,10) ) = 1.0
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
@@ -30,14 +28,14 @@ Shader "Custom/GTreeShader"
         };
 
         float _Amount;
-        float _WaveSpeed, _WaveFreq;
         half _Glossiness;
         half _Metallic;
         fixed4 _Color;
 
-        void vert (inout appdata_base v)
+        void vert (inout appdata_full v)
         {
-            v.vertex.xyz += cos(_Time*_WaveFreq + _WaveSpeed*UNITY_TWO_PI*(-v.texcoord.y))*normalize(v.normal) * _Amount;
+            float displacement = tex2Dlod(_MainTex, float4(v.texcoord.y, 0.5, 0,0)).r;
+            v.vertex.xyz += normalize(v.normal) * _Amount * displacement;
         }
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
@@ -50,7 +48,7 @@ Shader "Custom/GTreeShader"
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             // Albedo comes from a texture tinted by color
-            fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+            fixed4 c = _Color; //tex2D (_MainTex, IN.uv_MainTex) * _Color;
             o.Albedo = c.rgb;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
