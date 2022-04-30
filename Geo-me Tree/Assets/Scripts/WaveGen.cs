@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class WaveTextureGenerator : MonoBehaviour
+public class WaveGen : MonoBehaviour
 {
     [SerializeField]
     [Range(0, 1)]
