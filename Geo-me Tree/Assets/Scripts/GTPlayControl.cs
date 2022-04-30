@@ -13,10 +13,20 @@ public class GTPlayControl : MonoBehaviour
     }
 
     public void Play() {
-        _animator.SetTrigger("PlayCC6");
+        var toggle = !_animator.GetBool("PlayCC6b");
+        _animator.SetBool("PlayCC6b", toggle);
+
+        if( toggle == false ) {
+            AudioEnd();
+        }
     }
 
     public void AudioBegin() {
         _source.Play();
+    }
+
+    public void AudioEnd() {
+        _source.Stop();
+        _source.time = 0;
     }
 }
